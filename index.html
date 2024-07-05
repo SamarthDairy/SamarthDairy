@@ -161,7 +161,7 @@
 </body>
 </html> -->
 
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html>
 <head>
   <title>Order Details</title>
@@ -306,5 +306,168 @@
     </form>
   </div>
   <div id="order-list"></div>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Order Details</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      padding: 20px;
+      background-color: #f2f2f2;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+    }
+    .form-container {
+      max-width: 500px;
+      margin: 0 auto 20px;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .form-container input {
+      width: calc(100% - 22px);
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+    .form-container button {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 5px;
+      background-color: #007bff;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .form-container button:hover {
+      background-color: #0056b3;
+    }
+    .order-list {
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .order-card {
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 20px;
+      margin: 10px 0;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s;
+    }
+    .order-card:hover {
+      transform: translateY(-5px);
+    }
+    .order-card p {
+      margin: 8px 0;
+      font-size: 16px;
+      color: #555;
+    }
+    .order-card strong {
+      font-weight: bold;
+      color: #333;
+    }
+    @media (max-width: 600px) {
+      .order-card {
+        padding: 16px;
+      }
+      .order-card p {
+        font-size: 14px;
+      }
+      .form-container {
+        padding: 16px;
+      }
+      .form-container input, .form-container button {
+        font-size: 14px;
+      }
+    }
+  </style>
+  <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-firestore.js"></script>
+  <script>
+    // TODO: Replace with your project's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyCW_kKP0CJk34t7ELxmU9iOq6OdP8ADOvk",
+      authDomain: "samarth-dairy-2024.firebaseapp.com",
+      projectId: "samarth-dairy-2024",
+      storageBucket: "samarth-dairy-2024.appspot.com",
+      messagingSenderId: "901768059769",
+      appId: "1:901768059769:web:49355f0ae1bd3f484bada8",
+      measurementId: "G-GTCM259ZC6"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // Function to get order details
+    async function getOrderDetails(customerId) {
+      try {
+        const orders = await db.collection('orders').where('userId', '==', customerId).get();
+        const orderList = document.getElementById('order-list');
+        
+        orderList.innerHTML = ''; // Clear previous results
+        
+        if (orders.empty) {
+          orderList.innerHTML = '<p>No orders found for this customer.</p>';
+          return;
+        }
+        
+        orders.forEach((order) => {
+          const orderData = order.data();
+          console.log(orderData); // Log the order data for debugging
+          
+          const listItem = document.createElement('div');
+          listItem.className = 'order-card';
+          const timestamp = orderData.timestamp.toDate();
+          const orderDate = `${('0' + timestamp.getDate()).slice(-2)}${('0' + (timestamp.getMonth() + 1)).slice(-2)}${timestamp.getFullYear()}`;
+
+          listItem.innerHTML = `
+            <p><strong>Product:</strong> ${orderData.productName}</p>
+            <p><strong>Amount:</strong> ₹${orderData.orderAmount}</p>
+            <p><strong>Price:</strong> ₹${orderData.price}</p>
+            <p><strong>Quantity:</strong> ${orderData.quantity}</p>
+            <p><strong>Date:</strong> ${orderDate}</p>
+          `;
+          orderList.appendChild(listItem);
+        });
+      } catch (error) {
+        console.error('Error fetching order details: ', error);
+      }
+    }
+
+    // Handle form submission
+    function handleFormSubmit(event) {
+      event.preventDefault(); // Prevent form from submitting normally
+      const customerId = document.getElementById('customer-id').value.trim();
+      if (customerId) {
+        document.querySelector('.form-container').style.display = 'none';
+        getOrderDetails(customerId);
+      } else {
+        alert('Please enter a customer ID');
+      }
+    }
+  </script>
+</head>
+<body>
+  <h1>Order Details</h1>
+  <div class="form-container">
+    <form onsubmit="handleFormSubmit(event)">
+      <input type="text" id="customer-id" placeholder="Enter customer ID" required>
+      <button type="submit">Get Orders</button>
+    </form>
+  </div>
+  <div id="order-list" class="order-list"></div>
 </body>
 </html>
