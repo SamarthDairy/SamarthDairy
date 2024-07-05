@@ -52,6 +52,29 @@
 <html>
 <head>
   <title>Order Details</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    .order-card {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 16px;
+      margin: 16px 0;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .order-card h2 {
+      margin: 0 0 8px;
+      font-size: 20px;
+    }
+    .order-card p {
+      margin: 4px 0;
+    }
+    .order-card strong {
+      display: inline-block;
+      width: 100px;
+    }
+  </style>
   <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-firestore.js"></script>
   <script>
@@ -76,7 +99,7 @@
         
         if (orders.empty) {
           console.log('No matching documents.');
-          orderList.innerHTML = '<li>No orders found for this customer.</li>';
+          orderList.innerHTML = '<p>No orders found for this customer.</p>';
           return;
         }
         
@@ -84,15 +107,17 @@
           const orderData = order.data();
           console.log(orderData); // Log the order data for debugging
           
-          const listItem = document.createElement('li');
+          const listItem = document.createElement('div');
+          listItem.className = 'order-card';
           const orderDate = orderData.timestamp.toDate().toLocaleString();
 
           listItem.innerHTML = `
-            <strong>Order:</strong> ${orderData.productName} <br>
-            <strong>Amount:</strong> ₹${orderData.orderAmount} <br>
-            <strong>Price:</strong> ₹${orderData.price} <br>
-            <strong>Quantity:</strong> ${orderData.quantity} <br>
-            <strong>Date:</strong> ${orderDate}
+            <h2>Order Details</h2>
+            <p><strong>Product:</strong> ${orderData.productName}</p>
+            <p><strong>Amount:</strong> ₹${orderData.orderAmount}</p>
+            <p><strong>Price:</strong> ₹${orderData.price}</p>
+            <p><strong>Quantity:</strong> ${orderData.quantity}</p>
+            <p><strong>Date:</strong> ${orderDate}</p>
           `;
           orderList.appendChild(listItem);
         });
@@ -114,6 +139,6 @@
 </head>
 <body>
   <h1>Order Details</h1>
-  <ul id="order-list"></ul>
+  <div id="order-list"></div>
 </body>
 </html>
