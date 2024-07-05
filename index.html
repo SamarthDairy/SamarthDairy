@@ -83,8 +83,17 @@
         orders.forEach((order) => {
           const orderData = order.data();
           console.log(orderData); // Log the order data for debugging
+          
           const listItem = document.createElement('li');
-          listItem.textContent = `Order: ${orderData.productName}, Amount: ₹${orderData.orderAmount}`;
+          const orderDate = orderData.timestamp.toDate().toLocaleString();
+
+          listItem.innerHTML = `
+            <strong>Order:</strong> ${orderData.productName} <br>
+            <strong>Amount:</strong> ₹${orderData.orderAmount} <br>
+            <strong>Price:</strong> ₹${orderData.price} <br>
+            <strong>Quantity:</strong> ${orderData.quantity} <br>
+            <strong>Date:</strong> ${orderDate}
+          `;
           orderList.appendChild(listItem);
         });
       } catch (error) {
