@@ -70,14 +70,26 @@
 
     // Function to get order details
     async function getOrderDetails(customerId) {
-      const orders = await db.collection('orders').where('customerId', '==', customerId).get();
-      const orderList = document.getElementById('order-list');
-      orders.forEach((order) => {
-        const orderData = order.data();
-        const listItem = document.createElement('li');
-        listItem.textContent = `Order: ${orderData.productName}, Amount: ₹${orderData.amount}`;
-        orderList.appendChild(listItem);
-      });
+      try {
+        const orders = await db.collection('orders').where('userId', '==', customerId).get();
+        const orderList = document.getElementById('order-list');
+        
+        if (orders.empty) {
+          console.log('No matching documents.');
+          orderList.innerHTML = '<li>No orders found for this customer.</li>';
+          return;
+        }
+        
+        orders.forEach((order) => {
+          const orderData = order.data();
+          console.log(orderData); // Log the order data for debugging
+          const listItem = document.createElement('li');
+          listItem.textContent = `Order: ${orderData.productName}, Amount: ₹${orderData.orderAmount}`;
+          orderList.appendChild(listItem);
+        });
+      } catch (error) {
+        console.error('Error fetching order details: ', error);
+      }
     }
 
     // Specify customer ID
